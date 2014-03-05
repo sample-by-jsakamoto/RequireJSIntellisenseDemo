@@ -27809,3 +27809,32 @@ function (args, quit, logger, build) {
         typeof Components !== 'undefined' && Components.interfaces) ?
         Array.prototype.slice.call(arguments, 0) : []),
     (typeof readFile !== 'undefined' ? readFile : undefined)));
+
+/**
+ * The function that handles definitions of modules. Differs from
+ * require() in that a string for the module should be the first argument,
+ * and the function to execute after dependencies are loaded should
+ * return a value to define the module corresponding to the first argument's
+ * name.
+ */
+define = function (name, deps, callback) {
+    var i, args, knownmap;
+
+    if (typeof name !== 'string') {
+        callback = deps;
+        deps = name;
+        name = null;
+    }
+    
+    knownmap = {
+        "jquery": $
+        // , "ko" : ko
+        // etc...
+    };
+    args = [];
+    for (i = 0; i < deps.length; i++) {
+        args.push(knownmap[deps[i]] || {});
+    }
+
+    callback.apply(window, args);
+};
